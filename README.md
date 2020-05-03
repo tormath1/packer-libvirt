@@ -1,4 +1,5 @@
 # Packer Libvirt builder
+![Go](https://github.com/tormath1/packer-libvirt/workflows/Go/badge.svg)
 
 Use your libvirt provider to build images with Packer
 
