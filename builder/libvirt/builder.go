@@ -16,6 +16,7 @@ import (
 
 type Builder struct {
 	config Config
+	runner multistep.Runner
 }
 
 type Config struct {
@@ -70,6 +71,13 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	state := new(multistep.BasicStateBag)
 	state.Put("config", &b.config)
 	state.Put("driver", driver)
+	state.Put("ui", ui)
+
+	steps := []multistep.Step{
+		new(stepCreatePool),
+	}
+	b.runner = common.NewRunner(steps, b.config.PackerConfig, ui)
+	b.runner.Run(ctx, state)
 	return nil, nil
 }
 

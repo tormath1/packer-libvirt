@@ -46,8 +46,12 @@ func (dl *driverLibvirt) CreatePool(pool Pool) (Pool, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create pool XML")
 	}
-	if _, err := dl.conn.StoragePoolDefineXML(poolXML, 0); err != nil {
+	p, err := dl.conn.StoragePoolDefineXML(poolXML, 0)
+	if err != nil {
 		return nil, errors.Wrap(err, "unable to define pool XML")
+	}
+	if err := p.Create(libvirt.STORAGE_POOL_CREATE_WITH_BUILD); err != nil {
+		return nil, errors.Wrap(err, "unable to start pool")
 	}
 	return pool, nil
 }
