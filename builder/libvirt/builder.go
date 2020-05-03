@@ -2,6 +2,7 @@ package libvirt
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer/common"
@@ -24,8 +25,16 @@ type Config struct {
 	bootcommand.VNCConfig          `mapstructure:",squash"`
 	shutdowncommand.ShutdownConfig `mapstructure:",squash"`
 
-	// The Libvirt URI to target. https://libvirt.org/uri.html
+	// Libvirt URI to target. https://libvirt.org/uri.html
 	LibvirtURI string `mapstructure:"libvirt_URI" required: "true"`
+
+	// PoolType the type of the pool to create. Defaut goes to `dir`
+	PoolType string `mapstructure:"pool_type" required: "false"`
+	// PoolName the name of the pool to store the created domain volume
+	// If the pool does not exist a new one will be created with PoolName, PoolType and PoolTargetPath
+	PoolName string `mapstructure:"pool_name" required: "true"`
+	// PoolTargetPath the target path of the pool. Where the volume will be stored
+	PoolTargetPath string `mapstructure:"pool_target_path" required: "false"`
 
 	ctx interpolate.Context
 }
@@ -43,6 +52,12 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	}, raws...)
 	if err != nil {
 		return nil, nil, err
+	}
+	if len(b.config.PoolType) == 0 {
+		b.config.PoolType = "dir"
+	}
+	if len(b.config.PoolTargetPath) == 0 {
+		b.config.PoolTargetPath = fmt.Sprintf("/var/lib/libvirt/%s", b.config.PoolName)
 	}
 	return nil, nil, nil
 }
