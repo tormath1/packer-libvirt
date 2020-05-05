@@ -36,4 +36,27 @@ func (s *stepCreatePool) Run(ctx context.Context, state multistep.StateBag) mult
 	return multistep.ActionContinue
 }
 
-func (s *stepCreatePool) Cleanup(state multistep.StateBag) {}
+func (s *stepCreatePool) Cleanup(state multistep.StateBag) {
+	driver := state.Get("driver").(Driver)
+	ui := state.Get("ui").(packer.Ui)
+	config := state.Get("config").(*Config)
+
+	pool, err := driver.GetPool(config.PoolName)
+	if err != nil {
+		ui.Error(err.Error())
+		return
+	}
+	if pool == nil {
+		return
+	}
+	name, err := pool.GetName()
+	if err != nil {
+		ui.Error(err.Error())
+		return
+	}
+	if err := driver.DeletePool(name); err != nil {
+		ui.Error(err.Error())
+		return
+	}
+	return
+}
