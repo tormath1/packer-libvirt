@@ -37,6 +37,21 @@ type Config struct {
 	// PoolTargetPath the target path of the pool. Where the volume will be stored
 	PoolTargetPath string `mapstructure:"pool_target_path" required: "false"`
 
+	// VolumeName the name of the volume to create
+	VolumeName string `mapstructure:"volume_name" required: "false"`
+	// VolumeType the type of the volume to create (default: "file")
+	VolumeType string `mapstructure:"volume_type" required: "false"`
+	// VolumeName the allocation of the volume to create
+	VolumeAllocation int `mapstructure:"volume_allocation" required: "false"`
+	// VolumeCapacityUnit the unit of the volume capacity
+	VolumeCapacityUnit string `json:mapstructure:"volume_capacity_unit" required: "false"`
+	// VolumeCapacity the volume capacity
+	VolumeCapacity int `json:mapstructure:"volume_capacity" required: "false"`
+	// VolumeTargetFormatType the type of the target format (default: "qcow2")
+	VolumeTargetFormatType string `json:mapstructure:"volume_target_format_type" required: "false"`
+	// VolumeTargetPath is the target path (within the PoolTargetPath)
+	VolumeTargetPath string `json:mapstructure:"volume_target_path" required: "false"`
+
 	ctx interpolate.Context
 }
 
@@ -59,6 +74,24 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	}
 	if len(b.config.PoolTargetPath) == 0 {
 		b.config.PoolTargetPath = fmt.Sprintf("/var/lib/libvirt/%s", b.config.PoolName)
+	}
+	if len(b.config.VolumeType) == 0 {
+		b.config.VolumeType = "file"
+	}
+	if len(b.config.VolumeCapacityUnit) == 0 {
+		b.config.VolumeCapacityUnit = "G"
+	}
+	if b.config.VolumeCapacity == 0 {
+		b.config.VolumeCapacity = 8
+	}
+	if len(b.config.VolumeTargetPath) == 0 {
+		b.config.VolumeTargetPath = fmt.Sprintf("%s/%s", b.config.PoolTargetPath, b.config.VolumeName)
+	}
+	if len(b.config.VolumeTargetFormatType) == 0 {
+		b.config.VolumeTargetFormatType = "qcow2"
+	}
+	if len(b.config.VolumeName) == 0 {
+		b.config.VolumeName = fmt.Sprintf("%s-volume.%s", b.config.PoolName, b.config.VolumeTargetFormatType)
 	}
 	return nil, nil, nil
 }
