@@ -11,6 +11,9 @@ type Driver interface {
 	// CreatePool creates a pool on the libvirt
 	// host
 	CreatePool(Pool) (Pool, error)
+
+	// DeletePool delete a pool
+	DeletePool(string) error
 }
 
 type Pool interface {

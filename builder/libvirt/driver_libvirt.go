@@ -56,6 +56,24 @@ func (dl *driverLibvirt) CreatePool(pool Pool) (Pool, error) {
 	return pool, nil
 }
 
+func (dl *driverLibvirt) DeletePool(name string) error {
+	pool, err := dl.conn.LookupStoragePoolByName(name)
+	if err != nil {
+		return nil
+	}
+	defer pool.Free()
+	if err := pool.Destroy(); err != nil {
+		return errors.Wrapf(err, "unable to destroy pool: %s", name)
+	}
+	if err := pool.Delete(libvirt.STORAGE_POOL_DELETE_NORMAL); err != nil {
+		return errors.Wrapf(err, "unable to delete pool: %s", name)
+	}
+	if err := pool.Undefine(); err != nil {
+		return errors.Wrapf(err, "unable to undefine pool: %s", name)
+	}
+	return nil
+}
+
 func (pl *poolLibvirt) GetName() (string, error) {
 	return pl.PoolName, nil
 }
