@@ -10,7 +10,7 @@ Use your libvirt provider to build images with Packer
 This roadmap is temporary and more information will be added.
 
 - [x] pool creation
-- [ ] volume creation
+- [x] volume creation
 - [ ] network creation
 - [ ] domain creation
 - [ ] domain provisioning
