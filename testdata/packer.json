@@ -1,0 +1,8 @@
+{
+	"builders": [{
+		"type": "libvirt",
+		"libvirt_URI": "qemu:///system",
+		"pool_name": "test-packer",
+		"volume_name": "debian-01"
+	}]
+}
