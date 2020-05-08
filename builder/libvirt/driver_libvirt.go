@@ -26,6 +26,32 @@ type poolLibvirt struct {
 	PoolTargetPath string
 }
 
+type volLibvirt struct {
+	VolumeName         string
+	VolumeAllocation   int
+	VolumeCapacityUnit string
+	VolumeCapacity     int
+	VolumeTargetPath   string
+}
+
+func (vl *volLibvirt) GetName() (string, error) {
+	return vl.VolumeName, nil
+}
+
+func (vl *volLibvirt) GetXML() (string, error) {
+	var volXML bytes.Buffer
+	tmpl, err := template.
+		New("vol").
+		Parse(libvirtXML.VolumeXML)
+	if err != nil {
+		return "", errors.Wrap(err, "unable to parse template")
+	}
+	if err := tmpl.Execute(&volXML, vl); err != nil {
+		return "", errors.Wrap(err, "unable to execute template")
+	}
+	return volXML.String(), nil
+}
+
 func (dl *driverLibvirt) GetPool(name string) (Pool, error) {
 	pool, err := dl.conn.LookupStoragePoolByName(name)
 	if err != nil {
@@ -70,6 +96,61 @@ func (dl *driverLibvirt) DeletePool(name string) error {
 	}
 	if err := pool.Undefine(); err != nil {
 		return errors.Wrapf(err, "unable to undefine pool: %s", name)
+	}
+	return nil
+}
+
+func (dl *driverLibvirt) GetVolume(pool, name string) (Volume, error) {
+	p, err := dl.conn.LookupStoragePoolByName(name)
+	if err != nil {
+		return nil, nil
+	}
+	defer p.Free()
+	vol, err := p.LookupStorageVolByName(name)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to get vol %s of pool %s", name, pool)
+	}
+	defer vol.Free()
+	volName, err := vol.GetName()
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to get vol %s of pool %s", name, pool)
+	}
+	return &volLibvirt{
+		VolumeName: volName,
+	}, nil
+}
+
+func (dl *driverLibvirt) CreateVolume(pool string, vol Volume) (Volume, error) {
+	p, err := dl.conn.LookupStoragePoolByName(pool)
+	if err != nil {
+		return nil, nil
+	}
+	defer p.Free()
+	volXML, err := vol.GetXML()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create volume XML")
+	}
+	v, err := p.StorageVolCreateXML(volXML, libvirt.STORAGE_VOL_CREATE_PREALLOC_METADATA)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create vol")
+	}
+	defer v.Free()
+	return vol, nil
+}
+
+func (dl *driverLibvirt) DeleteVolume(pool string, vol string) error {
+	p, err := dl.conn.LookupStoragePoolByName(pool)
+	if err != nil {
+		return nil
+	}
+	defer p.Free()
+	v, err := p.LookupStorageVolByName(vol)
+	if err != nil {
+		return errors.Wrapf(err, "unable to get vol %s of pool %s", vol, pool)
+	}
+	defer v.Free()
+	if err := v.Delete(libvirt.STORAGE_VOL_DELETE_NORMAL); err != nil {
+		return errors.Wrapf(err, "unable to delete volume: %s from pool: %s", vol, pool)
 	}
 	return nil
 }
