@@ -5,3 +5,6 @@ test:
 
 install: build
 	@mv packer-builder-libvirt ${HOME}/.packer.d/plugins
+
+validate: install
+	@packer validate testdata/packer.json

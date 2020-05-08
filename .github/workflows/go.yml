@@ -38,10 +38,7 @@ jobs:
     - name: Test
       run: make test
 
-    - name: Install
+    - name: Validate
       run: |
         mkdir ${HOME}/.packer.d/plugins
-        make install
-
-    - name: Validate
-      run: packer validate testdata/packer.json
+        make validate
