@@ -27,11 +27,13 @@ type poolLibvirt struct {
 }
 
 type volLibvirt struct {
-	VolumeName         string
-	VolumeAllocation   int
-	VolumeCapacityUnit string
-	VolumeCapacity     int
-	VolumeTargetPath   string
+	VolumeName             string
+	VolumeAllocation       int
+	VolumeCapacityUnit     string
+	VolumeCapacity         int
+	VolumeTargetPath       string
+	VolumeTargetFormatType string
+	VolumeType             string
 }
 
 func (vl *volLibvirt) GetName() (string, error) {
@@ -149,7 +151,7 @@ func (dl *driverLibvirt) DeleteVolume(pool string, vol string) error {
 		return errors.Wrapf(err, "unable to get vol %s of pool %s", vol, pool)
 	}
 	defer v.Free()
-	if err := v.Delete(libvirt.STORAGE_VOL_DELETE_NORMAL); err != nil {
+	if err := v.Delete(libvirt.STORAGE_VOL_DELETE_ZEROED); err != nil {
 		return errors.Wrapf(err, "unable to delete volume: %s from pool: %s", vol, pool)
 	}
 	return nil

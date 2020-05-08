@@ -50,7 +50,7 @@ func TestStepCreatePool(t *testing.T) {
 	})
 
 	t.Run("Success", func(t *testing.T) {
-		step := new(stepCreatePool)
+		step := new(stepCreateStorage)
 		defer step.Cleanup(state)
 		if action := step.Run(context.Background(), state); action != multistep.ActionContinue {
 			t.Fatalf("bad action: %#v", action)
