@@ -23,6 +23,18 @@ func (md *mockDriver) DeletePool(name string) error {
 	return nil
 }
 
+func (md *mockDriver) GetVolume(pool, volume string) (Volume, error) {
+	return nil, nil
+}
+
+func (md *mockDriver) DeleteVolume(pool, volume string) error {
+	return nil
+}
+
+func (md *mockDriver) CreateVolume(pool string, volume Volume) (Volume, error) {
+	return volume, nil
+}
+
 func TestStepCreatePool(t *testing.T) {
 	// fake state
 	c := &Config{
