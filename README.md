@@ -17,16 +17,16 @@ This roadmap is temporary and more information will be added.
 
 ## Install
 
-Build the plugin:
+You need to create the directory of packer custom plugins:
 
-```shell
-$ make
+```
+$ mkdir ${HOME}/.packer.d/plugins
 ```
 
-Install it to your plugin default location (`${HOME}/.packer.d/plugins`): 
+Buil and install the plugin:
 
 ```shell
-$ mv packer-builder-libvirt ${HOME}/.packer.d/plugins
+$ make install
 ```
 
 ## Parameters
