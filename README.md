@@ -11,7 +11,7 @@ This roadmap is temporary and more information will be added.
 
 - [x] pool creation
 - [x] volume creation
-- [ ] network creation
+- [x] network creation
 - [ ] domain creation
 - [ ] domain provisioning
 
@@ -46,3 +46,6 @@ The list of dedicated Libvirt parameters supported by the plugin.
 | volume_capacity           | The capacity of the volume in {{volume_capacity_unit}}             | false    | 8                                    |
 | volume_target_format_type | The type of the target format. Only "qcow2" is supported for now   | false    | qcow2                                |
 | volume_target_path        | The target path                                                    | false    | {{pool_target_path}}/{{volume_name}} |
+| network_name              | The name of the network to use / create                            | true     |                                      |
+| network_mode              | The mode of the forwarding method. Now, only 'nat' is supported    | false    | nat                                  |
+| network_bridge_name       | The name of the bridge interface to use                            | false    | virbr0                               |
