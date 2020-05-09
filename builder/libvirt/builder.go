@@ -44,20 +44,20 @@ type Config struct {
 	// VolumeName the allocation of the volume to create
 	VolumeAllocation int `mapstructure:"volume_allocation" required: "false"`
 	// VolumeCapacityUnit the unit of the volume capacity
-	VolumeCapacityUnit string `json:mapstructure:"volume_capacity_unit" required: "false"`
+	VolumeCapacityUnit string `mapstructure:"volume_capacity_unit" required: "false"`
 	// VolumeCapacity the volume capacity
-	VolumeCapacity int `json:mapstructure:"volume_capacity" required: "false"`
+	VolumeCapacity int `mapstructure:"volume_capacity" required: "false"`
 	// VolumeTargetFormatType the type of the target format (default: "qcow2")
-	VolumeTargetFormatType string `json:mapstructure:"volume_target_format_type" required: "false"`
+	VolumeTargetFormatType string `mapstructure:"volume_target_format_type" required: "false"`
 	// VolumeTargetPath is the target path (within the PoolTargetPath)
-	VolumeTargetPath string `json:mapstructure:"volume_target_path" required: "false"`
+	VolumeTargetPath string `mapstructure:"volume_target_path" required: "false"`
 
 	// NetworkName is the network to use or to be created
-	NetworkName string `json:mapstructure:"network_name" required: "true"`
+	NetworkName string `mapstructure:"network_name" required: "true"`
 	// NetworkMode the mode of the network. Default 'nat'
-	NetworkMode string `json:mapstructure:"network_mode" required: "false"`
+	NetworkMode string `mapstructure:"network_mode" required: "false"`
 	// NetworkBridgeName the name of the bridge interface to use. Default 'virbr0'
-	NetworkBridgeName string `json:mapstructure:"network_bridge_name" required: "false"`
+	NetworkBridgeName string `mapstructure:"network_bridge_name" required: "false"`
 
 	ctx interpolate.Context
 }
@@ -124,6 +124,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 
 	steps := []multistep.Step{
 		new(stepCreateStorage),
+		new(stepCreateNetwork),
 	}
 	b.runner = common.NewRunner(steps, b.config.PackerConfig, ui)
 	b.runner.Run(ctx, state)
