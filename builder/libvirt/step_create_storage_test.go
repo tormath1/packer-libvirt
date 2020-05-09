@@ -35,6 +35,18 @@ func (md *mockDriver) CreateVolume(pool string, volume Volume) (Volume, error) {
 	return volume, nil
 }
 
+func (md *mockDriver) GetNetwork(name string) (Network, error) {
+	return nil, nil
+}
+
+func (md *mockDriver) DeleteNetwork(name string) error {
+	return nil
+}
+
+func (md *mockDriver) CreateNetwork(net Network) (Network, error) {
+	return net, nil
+}
+
 func TestStepCreatePool(t *testing.T) {
 	// fake state
 	c := &Config{
