@@ -3,6 +3,7 @@
 		"type": "libvirt",
 		"libvirt_URI": "qemu:///system",
 		"pool_name": "test-packer",
-		"volume_name": "debian-01"
+		"volume_name": "debian-01",
+		"network_name": "packer-network"
 	}]
 }
