@@ -36,8 +36,32 @@ type volLibvirt struct {
 	VolumeType             string
 }
 
+type networkLibvirt struct {
+	NetworkName       string
+	NetworkMode       string
+	NetworkBridgeName string
+}
+
+func (nl *networkLibvirt) GetName() (string, error) {
+	return nl.NetworkName, nil
+}
+
 func (vl *volLibvirt) GetName() (string, error) {
 	return vl.VolumeName, nil
+}
+
+func (nl *networkLibvirt) GetXML() (string, error) {
+	var netXML bytes.Buffer
+	tmpl, err := template.
+		New("net").
+		Parse(libvirtXML.NetworkXML)
+	if err != nil {
+		return "", errors.Wrap(err, "unable to parse template")
+	}
+	if err := tmpl.Execute(&netXML, nl); err != nil {
+		return "", errors.Wrap(err, "unable to execute template")
+	}
+	return netXML.String(), nil
 }
 
 func (vl *volLibvirt) GetXML() (string, error) {
@@ -173,6 +197,32 @@ func (pl *poolLibvirt) GetXML() (string, error) {
 		return "", errors.Wrap(err, "unable to execute template")
 	}
 	return poolXML.String(), nil
+}
+
+func (dl *driverLibvirt) GetNetwork(name string) (Network, error) {
+	net, _ := dl.conn.LookupNetworkByName(name)
+	if net == nil {
+		return nil, nil
+	}
+	defer net.Free()
+	return &networkLibvirt{
+		NetworkName: name,
+	}, nil
+}
+
+func (dl *driverLibvirt) CreateNetwork(net Network) (Network, error) {
+	netXML, err := net.GetXML()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create network XML")
+	}
+	if _, err := dl.conn.NetworkCreateXML(netXML); err != nil {
+		return nil, errors.Wrap(err, "unable to create network")
+	}
+	return net, nil
+}
+
+func (dl *driverLibvirt) DeleteNetwork(name string) error {
+	return nil
 }
 
 func NewDriverLibvirt(URI string, ui packer.Ui) (Driver, error) {
