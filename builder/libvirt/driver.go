@@ -25,6 +25,17 @@ type Driver interface {
 
 	// DeleteVolume delete a volume
 	DeleteVolume(string, string) error
+
+	// GetNetwork returns a volume matching the string
+	// this prevents duplication error
+	GetNetwork(string) (Network, error)
+
+	// CreateNetwork creates a volume on the libvirt
+	// host
+	CreateNetwork(Network) (Network, error)
+
+	// DeleteNetwork delete a volume
+	DeleteNetwork(string) error
 }
 
 type Pool interface {
@@ -40,6 +51,16 @@ type Pool interface {
 type Volume interface {
 	// GetName returns the name of
 	// the pool
+	GetName() (string, error)
+
+	// GetXML returns the XML template
+	// rendered with the actual values
+	GetXML() (string, error)
+}
+
+type Network interface {
+	// GetName returns the name of
+	// the network
 	GetName() (string, error)
 
 	// GetXML returns the XML template
