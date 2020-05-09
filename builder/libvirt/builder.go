@@ -52,6 +52,13 @@ type Config struct {
 	// VolumeTargetPath is the target path (within the PoolTargetPath)
 	VolumeTargetPath string `json:mapstructure:"volume_target_path" required: "false"`
 
+	// NetworkName is the network to use or to be created
+	NetworkName string `json:mapstructure:"network_name" required: "true"`
+	// NetworkMode the mode of the network. Default 'nat'
+	NetworkMode string `json:mapstructure:"network_mode" required: "false"`
+	// NetworkBridgeName the name of the bridge interface to use. Default 'virbr0'
+	NetworkBridgeName string `json:mapstructure:"network_bridge_name" required: "false"`
+
 	ctx interpolate.Context
 }
 
@@ -92,6 +99,15 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	}
 	if len(b.config.VolumeName) == 0 {
 		b.config.VolumeName = fmt.Sprintf("%s-volume.%s", b.config.PoolName, b.config.VolumeTargetFormatType)
+	}
+	if len(b.config.NetworkName) == 0 {
+		b.config.NetworkName = "packer-network"
+	}
+	if len(b.config.NetworkMode) == 0 {
+		b.config.NetworkMode = "nat"
+	}
+	if len(b.config.NetworkBridgeName) == 0 {
+		b.config.NetworkBridgeName = "virbr0"
 	}
 	return nil, nil, nil
 }
