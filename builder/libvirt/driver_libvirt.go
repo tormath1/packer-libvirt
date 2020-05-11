@@ -42,6 +42,44 @@ type networkLibvirt struct {
 	NetworkBridgeName string
 }
 
+type domainLibvirt struct {
+	DomainName       string
+	DomainType       string
+	DomainMemoryUnit string
+	DomainMemory     int
+	DomainVCPU       int
+	DomainDiskType   string
+	PoolName         string
+	VolumeName       string
+	ISOProtoURL      string
+	ISOPathURL       string
+	ISOHostURL       string
+	ISOPortURL       string
+	IP               string
+}
+
+func (dom *domainLibvirt) GetName() (string, error) {
+	return dom.DomainName, nil
+}
+
+func (dom *domainLibvirt) GetXML() (string, error) {
+	var domXML bytes.Buffer
+	tmpl, err := template.
+		New("domain").
+		Parse(libvirtXML.DomainXML)
+	if err != nil {
+		return "", errors.Wrap(err, "unable to parse template")
+	}
+	if err := tmpl.Execute(&domXML, dom); err != nil {
+		return "", errors.Wrap(err, "unable to execute template")
+	}
+	return domXML.String(), nil
+}
+
+func (dom *domainLibvirt) GetIP() (string, error) {
+	return dom.IP, nil
+}
+
 func (nl *networkLibvirt) GetName() (string, error) {
 	return nl.NetworkName, nil
 }
@@ -235,4 +273,16 @@ func NewDriverLibvirt(URI string, ui packer.Ui) (Driver, error) {
 		conn: c,
 		ui:   ui,
 	}, nil
+}
+
+func (dl *driverLibvirt) CreateDomain(dom Domain) (Domain, error) {
+	domXML, err := dom.GetXML()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create domain XML")
+	}
+	if _, err := dl.conn.DomainCreateXML(domXML, libvirt.DOMAIN_NONE); err != nil {
+		return nil, errors.Wrap(err, "unable to create domain")
+	}
+	// TODO: Get the IP
+	return dom, nil
 }
