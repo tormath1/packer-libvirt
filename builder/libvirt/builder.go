@@ -59,6 +59,12 @@ type Config struct {
 	// NetworkBridgeName the name of the bridge interface to use. Default 'virbr0'
 	NetworkBridgeName string `mapstructure:"network_bridge_name" required: "false"`
 
+	DomainType       string `mapstructure:"domain_type" required: "false"`
+	DomainMemoryUnit string `mapstructure:"domain_memory_unit" required: "false"`
+	DomainMemory     int    `mapstructure:"domain_memory" required: "false"`
+	DomainVCPU       int    `mapstructure:"domain_vcpu" required: "false"`
+	DomainDiskType   string `mapstructure:"domain_disk_type" required: "false"`
+
 	ctx interpolate.Context
 }
 
@@ -108,6 +114,21 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	}
 	if len(b.config.NetworkBridgeName) == 0 {
 		b.config.NetworkBridgeName = "virbr0"
+	}
+	if len(b.config.DomainType) == 0 {
+		b.config.DomainType = "kvm"
+	}
+	if len(b.config.DomainMemoryUnit) == 0 {
+		b.config.DomainMemoryUnit = "MiB"
+	}
+	if b.config.DomainMemory == 0 {
+		b.config.DomainMemory = 1024
+	}
+	if b.config.DomainVCPU == 0 {
+		b.config.DomainVCPU = 1
+	}
+	if len(b.config.DomainDiskType) == 0 {
+		b.config.DomainDiskType = "qcow2"
 	}
 	return nil, nil, nil
 }
