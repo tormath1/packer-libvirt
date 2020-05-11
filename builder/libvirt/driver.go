@@ -36,6 +36,9 @@ type Driver interface {
 
 	// DeleteNetwork delete a volume
 	DeleteNetwork(string) error
+
+	// Create a domain
+	CreateDomain(Domain) (Domain, error)
 }
 
 type Pool interface {
@@ -65,5 +68,17 @@ type Network interface {
 
 	// GetXML returns the XML template
 	// rendered with the actual values
+	GetXML() (string, error)
+}
+
+type Domain interface {
+	// GetIP returns the IP of the domain
+	GetIP() (string, error)
+
+	// GetName returns the name of the domain
+	GetName() (string, error)
+
+	// GetXML returns the XML template
+	// of the domain
 	GetXML() (string, error)
 }
