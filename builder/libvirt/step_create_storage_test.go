@@ -47,6 +47,10 @@ func (md *mockDriver) CreateNetwork(net Network) (Network, error) {
 	return net, nil
 }
 
+func (md *mockDriver) CreateDomain(dom Domain) (Domain, error) {
+	return dom, nil
+}
+
 func TestStepCreatePool(t *testing.T) {
 	// fake state
 	c := &Config{
