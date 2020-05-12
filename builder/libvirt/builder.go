@@ -146,6 +146,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	steps := []multistep.Step{
 		new(stepCreateStorage),
 		new(stepCreateNetwork),
+		new(stepCreateDomain),
 	}
 	b.runner = common.NewRunner(steps, b.config.PackerConfig, ui)
 	b.runner.Run(ctx, state)
