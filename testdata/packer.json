@@ -4,6 +4,8 @@
 		"libvirt_URI": "qemu:///system",
 		"pool_name": "test-packer",
 		"volume_name": "debian-01",
-		"network_name": "packer-network"
+		"network_name": "packer-network",
+
+		"iso_url": "http://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.4.0-amd64-netinst.iso"
 	}]
 }
