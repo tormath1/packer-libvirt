@@ -49,3 +49,8 @@ The list of dedicated Libvirt parameters supported by the plugin.
 | network_name              | The name of the network to use / create                            | true     |                                      |
 | network_mode              | The mode of the forwarding method. Now, only 'nat' is supported    | false    | nat                                  |
 | network_bridge_name       | The name of the bridge interface to use                            | false    | virbr0                               |
+| domain_type               | The type of the domain. Only KVM is supported for now              | false    | kvm                                  |
+| domain_memory_unit        | The unit of the memory for the domain                              | false    | MiB                                  |
+| domain_memory             | The memory of the domain                                           | false    | 1024                                 |
+| domain_vcpu               | The number of VCPU                                                 | false    | 1                                    |
+| domain_disk_type          | The type of the disk to use. Only "qcow2" is supported.            | false    | qcow2                                |
