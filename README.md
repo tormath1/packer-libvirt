@@ -12,8 +12,8 @@ This roadmap is temporary and more information will be added.
 - [x] pool creation
 - [x] volume creation
 - [x] network creation
-- [ ] domain creation
-- [ ] domain provisioning
+- [x] domain creation
+- [ ] domain provisioning (initial provisionning with VNC)
 
 ## Install
 
