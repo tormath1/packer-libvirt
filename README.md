@@ -2,6 +2,7 @@
 Use your libvirt provider to build images with Packer
 
 ![Go](https://github.com/tormath1/packer-libvirt/workflows/Go/badge.svg)
+[![#packer-libvirt](https://img.shields.io/badge/IRC-%23packer--libvirt-blue)](https://webchat.freenode.net/)
 
 :warning: it's under active development, it's not functional yet. Take a look at the roadmad :relaxed: :warning:
 
